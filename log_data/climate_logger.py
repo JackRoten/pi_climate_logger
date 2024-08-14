@@ -1,5 +1,6 @@
-import time
 import sqlite3
+import time
+from datetime import datetime
 from pathlib import Path
 
 # import adafruit_dht
@@ -12,7 +13,7 @@ print(db_path)
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-cursor.execute("CREATE TABLE IF NOT EXISTS climate (id INT, location VARCHAR(50),temperature VARCHAR(50),humidity VARCHAR(100), log_time VARCHAR(100));")
+cursor.execute("CREATE TABLE IF NOT EXISTS climate (location VARCHAR(50),temperature FLOAT, humidity FLOAT, log_time DATETIME);")
 
 
 # def log_pi_climate():
@@ -41,17 +42,16 @@ def log_test_climate():
     """
     while True:
         try:
-            id = time.time()
-            log_time = time.ctime(id)
+            log_time = datetime.now()
             location = "garage"
             temperature_c = 28.333
             temperature_f = temperature_c * (9 / 5) + 32
-            humidity = 54
+            humidity = 54.66
 
-            print("{} is {:.1f} F Humidity: {}% at {}".format(location, temperature_f, humidity, log_time))
+            print("{} is {:.2f} F Humidity: {:.2f}% at {}".format(location, temperature_f, humidity, log_time))
             # add data to db
             # query =
-            cursor.execute("INSERT INTO climate (id, temperature, humidity, log_time) values (?, ?, ?, ?)", (id, location, temperature_f, humidity, log_time))
+            cursor.execute("INSERT INTO climate (location, temperature, humidity, log_time) values (?, ?, ?, ?)", (location, temperature_f, humidity, log_time))
             conn.commit()
             print("Record added to climate", cursor.rowcount)
         except RuntimeError as err:
